@@ -20,29 +20,27 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
         hasOnlyNamedMembers,
     } = styleApi;
 
-    const modules = readdirSync("./node_modules");
-
     const isScopedModule: IMatcherFunction = (imported) =>
         Boolean(imported.moduleName[0] === "@");
-    const isFromNodeModules: IMatcherFunction = (imported) =>
-        Boolean(modules.indexOf(imported.moduleName.split("/")[0]) !== -1);
     const isReactModule: IMatcherFunction = (imported) =>
         Boolean(imported.moduleName.match(/^(react|prop-types|redux)/));
     const isCssModule: IMatcherFunction = (imported) =>
         Boolean(imported.moduleName.match(/\.s?css$/));
 
     const isComponentModule: IMatcherFunction = (imported) =>
-        Boolean(imported.moduleName.match(/^\.{1,2}\/components/));
+        Boolean(imported.moduleName.match(/^(?:(?:~\/)|(?:\.{1,2}\/)*)components/));
     const isLibModule: IMatcherFunction = (imported) =>
-        Boolean(imported.moduleName.match(/^\.{1,2}\/lib/));
+        Boolean(imported.moduleName.match(/^(?:(?:~\/)|(?:\.{1,2}\/)*)lib/));
     const isReduxModule: IMatcherFunction = (imported) =>
-        Boolean(imported.moduleName.match(/^\.{1,2}\/redux/));
+        Boolean(imported.moduleName.match(/^(?:(?:~\/)|(?:\.{1,2}\/)*)redux/));
     const isSagaModule: IMatcherFunction = (imported) =>
-        Boolean(imported.moduleName.match(/^\.{1,2}\/sagas/));
+        Boolean(imported.moduleName.match(/^(?:(?:~\/)|(?:\.{1,2}\/)*)sagas/));
     const isServiceModule: IMatcherFunction = (imported) =>
-        Boolean(imported.moduleName.match(/^\.{1,2}\/services/));
+        Boolean(imported.moduleName.match(/^(?:(?:~\/)|(?:\.{1,2}\/)*)services/));
     const isStyleModule: IMatcherFunction = (imported) =>
-        Boolean(imported.moduleName.match(/^\.{1,2}\/styles/));
+        Boolean(imported.moduleName.match(/^(?:(?:~\/)|(?:\.{1,2}\/)*)styles/));
+    const isRootModule: IMatcherFunction = (imported) =>
+        Boolean(imported.moduleName.match(/^~\//));
     const isLocalModule: IMatcherFunction = (imported) =>
         Boolean(imported.moduleName.match(/^\.\//));
 
@@ -58,11 +56,16 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
 
     return [
         // import "foo"
-        {match: and(hasNoMember, isAbsoluteModule)},
+        {match: and(hasNoMember, isAbsoluteModule, not(isRootModule))},
+        {separator: true},
+
+        // import "@foo/foo"
+        {match: and(hasNoMember, isScopedModule)},
         {separator: true},
 
         // import "./foo"
         {match: and(hasNoMember, isRelativeModule, not(isCssModule))},
+        {match: and(hasNoMember, isRootModule, not(isCssModule))},
         {separator: true},
 
         // import React from "react";
@@ -81,9 +84,17 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
         },
         {separator: true},
 
+        // import Component from "@components/Component.jsx";
+        {
+            match: isScopedModule,
+            sort: moduleName(naturally),
+            sortNamedMembers: alias(unicode),
+        },
+        {separator: true},
+
         // import uniq from 'lodash/uniq';
         {
-            match: and(isFromNodeModules, hasOnlyDefaultMember),
+            match: and(isAbsoluteModule, hasOnlyDefaultMember, not(isRootModule)),
             sort: moduleName(naturally),
             sortNamedMembers: alias(unicode),
         },
@@ -91,7 +102,7 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
 
         // import { uniq } from 'lodash/uniq';
         {
-            match: and(isFromNodeModules, hasOnlyNamedMembers),
+            match: and(isAbsoluteModule, hasOnlyNamedMembers, not(isRootModule)),
             sort: moduleName(naturally),
             sortNamedMembers: alias(unicode),
         },
@@ -99,23 +110,7 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
 
         // import uniq from 'lodash/uniq';
         {
-            match: isFromNodeModules,
-            sort: moduleName(naturally),
-            sortNamedMembers: alias(unicode),
-        },
-        {separator: true},
-
-        // import Component from "components/Component.jsx";
-        {
-            match: isAbsoluteModule,
-            sort: moduleName(naturally),
-            sortNamedMembers: alias(unicode),
-        },
-        {separator: true},
-
-        // import Component from "@components/Component.jsx";
-        {
-            match: isScopedModule,
+            match: and(isAbsoluteModule, not(isRootModule)),
             sort: moduleName(naturally),
             sortNamedMembers: alias(unicode),
         },
@@ -196,6 +191,30 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
         // import … from "../foo";
         {
             match: and(isRelativeModule, not(isCssModule)),
+            sort: [dotSegmentCount, moduleName(naturally)],
+            sortNamedMembers: alias(unicode),
+        },
+        {separator: true},
+
+        // import Component from "../foo";
+        {
+            match: and(isRootModule, not(isCssModule), hasOnlyDefaultMember),
+            sort: [dotSegmentCount, moduleName(naturally)],
+            sortNamedMembers: alias(unicode),
+        },
+        {separator: true},
+
+        // import { Component } from "../foo";
+        {
+            match: and(isRootModule, not(isCssModule), hasOnlyNamedMembers),
+            sort: [dotSegmentCount, moduleName(naturally)],
+            sortNamedMembers: alias(unicode),
+        },
+        {separator: true},
+
+        // import … from "../foo";
+        {
+            match: and(isRootModule, not(isCssModule)),
             sort: [dotSegmentCount, moduleName(naturally)],
             sortNamedMembers: alias(unicode),
         },
