@@ -164,14 +164,6 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
         },
         {separator: true},
 
-        // import … from "./foo";
-        {
-            match: isLocalModule,
-            sort: [dotSegmentCount, moduleName(naturally)],
-            sortNamedMembers: alias(unicode),
-        },
-        {separator: true},
-
         // import Component from "../foo";
         {
             match: and(isRelativeModule, not(isCssModule), hasOnlyDefaultMember),
@@ -215,6 +207,14 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
         // import … from "../foo";
         {
             match: and(isRootModule, not(isCssModule)),
+            sort: [dotSegmentCount, moduleName(naturally)],
+            sortNamedMembers: alias(unicode),
+        },
+        {separator: true},
+
+        // import … from "./foo";
+        {
+            match: isLocalModule,
             sort: [dotSegmentCount, moduleName(naturally)],
             sortNamedMembers: alias(unicode),
         },
