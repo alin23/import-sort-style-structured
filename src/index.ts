@@ -166,7 +166,7 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
 
         // import Component from "../foo";
         {
-            match: and(isRelativeModule, not(isCssModule), hasOnlyDefaultMember),
+            match: and(isRelativeModule, not(isCssModule), not(isLocalModule), hasOnlyDefaultMember),
             sort: [dotSegmentCount, moduleName(naturally)],
             sortNamedMembers: alias(unicode),
         },
@@ -174,7 +174,7 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
 
         // import { Component } from "../foo";
         {
-            match: and(isRelativeModule, not(isCssModule), hasOnlyNamedMembers),
+            match: and(isRelativeModule, not(isCssModule), not(isLocalModule), hasOnlyNamedMembers),
             sort: [dotSegmentCount, moduleName(naturally)],
             sortNamedMembers: alias(unicode),
         },
@@ -182,31 +182,31 @@ export default function(styleApi: IStyleAPI): IStyleItem[] {
 
         // import … from "../foo";
         {
-            match: and(isRelativeModule, not(isCssModule)),
+            match: and(isRelativeModule, not(isCssModule), not(isLocalModule)),
             sort: [dotSegmentCount, moduleName(naturally)],
             sortNamedMembers: alias(unicode),
         },
         {separator: true},
 
-        // import Component from "../foo";
+        // import Component from "~/foo";
         {
-            match: and(isRootModule, not(isCssModule), hasOnlyDefaultMember),
+            match: and(isRootModule, not(isCssModule), not(isLocalModule), hasOnlyDefaultMember),
             sort: [dotSegmentCount, moduleName(naturally)],
             sortNamedMembers: alias(unicode),
         },
         {separator: true},
 
-        // import { Component } from "../foo";
+        // import { Component } from "~/foo";
         {
-            match: and(isRootModule, not(isCssModule), hasOnlyNamedMembers),
+            match: and(isRootModule, not(isCssModule), not(isLocalModule), hasOnlyNamedMembers),
             sort: [dotSegmentCount, moduleName(naturally)],
             sortNamedMembers: alias(unicode),
         },
         {separator: true},
 
-        // import … from "../foo";
+        // import … from "~/foo";
         {
-            match: and(isRootModule, not(isCssModule)),
+            match: and(isRootModule, not(isCssModule), not(isLocalModule)),
             sort: [dotSegmentCount, moduleName(naturally)],
             sortNamedMembers: alias(unicode),
         },
