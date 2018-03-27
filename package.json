@@ -1,6 +1,6 @@
 {
   "name": "import-sort-style-structured",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "An import-sort style that groups and sorts by module, path, default/named members respecting React modules and CSS/SCSS files",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
