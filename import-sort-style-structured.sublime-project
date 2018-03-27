@@ -1,0 +1,23 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"*.js",
+				"*.map"
+			],
+			"folder_exclude_patterns":
+			[
+				"now-ui-kit",
+				"node_modules",
+				".ropeproject",
+				".next"
+			],
+			"path": "/Users/alin/Projects/spotify-discovery"
+		},
+		{
+			"path": "."
+		}
+	]
+}

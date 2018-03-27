@@ -1,0 +1,38 @@
+{
+  "name": "import-sort-style-structured",
+  "version": "0.0.2",
+  "description": "An import-sort style that groups and sorts by module, path, default/named members respecting React modules and CSS/SCSS files",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc -p src",
+    "watch:build": "tsc -p src -w",
+    "test": "mocha --compilers ts:ts-node/register,tsx:ts-node/register --recursive test",
+    "watch:test": "mocha -w --compilers ts:ts-node/register,tsx:ts-node/register --recursive test"
+  },
+  "author": "Alin Panaitiu <alin.p32@gmail.com> (https://github.com/alin23)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/alin23/import-sort-style-structured.git"
+  },
+  "homepage": "https://github.com/alin23/import-sort-style-structured#readme",
+  "bugs": {
+    "url": "https://github.com/alin23/import-sort-style-structured/issues"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.0.0",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^7.0.31",
+    "chai": "^4.0.2",
+    "import-sort-parser": "^3.0.0",
+    "mocha": "^3.4.2",
+    "ts-node": "^3.0.6",
+    "tslint": "^5.4.3",
+    "typescript": "^2.3.4"
+  },
+  "dependencies": {
+    "import-sort-style": "^3.0.0"
+  }
+}
